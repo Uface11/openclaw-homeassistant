@@ -34,9 +34,29 @@ Required gateway setting for chat:
 4. Restart Home Assistant
 5. Add integration via Settings → Devices & Services
 
+## Dashboard Card (Step 2)
+A first board-style card is included at:
+`www/openclaw-board-card.js`
+
+Add as Lovelace resource:
+- URL: `/local/openclaw-board-card.js`
+- Type: `module`
+
+Example card config:
+```yaml
+type: custom:openclaw-board-card
+title: OpenClaw Board
+icon: mdi:robot-outline
+board_url: https://github.com/AlexPEClub/openclaw_react_board
+quick_actions:
+  - Status check
+  - Create Kanban task
+  - Summarize updates
+```
+
 ## Development
-Place integration files under:
-`custom_components/openclaw/`
+- Integration backend: `custom_components/openclaw/`
+- Frontend card: `www/openclaw-board-card.js`
 
 ## Notes
 This is HACS-first and intentionally scoped for a fast, stable MVP.
