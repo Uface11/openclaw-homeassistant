@@ -6,9 +6,26 @@ OpenClaw integration for Home Assistant with a simple dashboard workflow:
 - view status in Home Assistant
 
 ## MVP (v0.1)
-- Config Flow (UI setup)
+- Config Flow (UI setup: Gateway URL, API token, agent id)
 - Services: `openclaw.send_message`, `openclaw.run_task`, `openclaw.refresh_status`
-- Sensor: online/offline + last response timestamp
+- Sensor: online/offline + status payload
+
+## Gateway endpoints used
+- `POST /tools/invoke` for status (`session_status` tool)
+- `POST /v1/chat/completions` for prompt/task execution
+
+Required gateway setting for chat:
+```json
+{
+  "gateway": {
+    "http": {
+      "endpoints": {
+        "chatCompletions": { "enabled": true }
+      }
+    }
+  }
+}
+```
 
 ## Install (HACS custom repository)
 1. HACS → Integrations → Custom repositories

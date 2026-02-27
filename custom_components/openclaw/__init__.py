@@ -7,8 +7,10 @@ from homeassistant.core import HomeAssistant, ServiceCall
 
 from .api import OpenClawApi
 from .const import (
+    CONF_AGENT_ID,
     CONF_API_TOKEN,
     CONF_BASE_URL,
+    DEFAULT_AGENT_ID,
     DOMAIN,
     PLATFORMS,
     SERVICE_REFRESH_STATUS,
@@ -32,6 +34,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     api = OpenClawApi(
         base_url=entry.data[CONF_BASE_URL],
         api_token=entry.data[CONF_API_TOKEN],
+        agent_id=entry.data.get(CONF_AGENT_ID, DEFAULT_AGENT_ID),
         session=session,
     )
     coordinator = OpenClawCoordinator(hass, api)
