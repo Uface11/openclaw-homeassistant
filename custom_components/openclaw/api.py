@@ -38,6 +38,10 @@ class OpenClawApi:
         # Uses the real Gateway tool-invoke HTTP endpoint.
         return await self.invoke_tool("session_status", {})
 
+    async def health(self) -> dict[str, Any]:
+        # Lightweight probe through tools invoke.
+        return await self.invoke_tool("sessions_list", {"limit": 1, "messageLimit": 0})
+
     async def chat(self, text: str) -> dict[str, Any]:
         # Requires gateway.http.endpoints.chatCompletions.enabled=true
         payload = {

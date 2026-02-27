@@ -19,3 +19,7 @@ run_task:
 refresh_status:
   name: Refresh status
   description: Force refresh OpenClaw status
+
+health_check:
+  name: Health check
+  description: Probe OpenClaw server via Gateway tools invoke

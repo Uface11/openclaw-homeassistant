@@ -11,3 +11,4 @@ DEFAULT_SCAN_INTERVAL = 30
 SERVICE_SEND_MESSAGE = "send_message"
 SERVICE_RUN_TASK = "run_task"
 SERVICE_REFRESH_STATUS = "refresh_status"
+SERVICE_HEALTH_CHECK = "health_check"

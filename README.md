@@ -45,6 +45,14 @@ Features (v2):
 - Delete task button
 - Local persistence via browser `localStorage`
 - Optional sync actions to OpenClaw (`run_task`) on add/move
+- Top-right actions: **Update** + **Health**
+
+## Exposed server entities (Top 5)
+- `sensor.openclaw_status`
+- `sensor.openclaw_active_sessions`
+- `sensor.openclaw_usage_tokens`
+- `sensor.openclaw_cost_estimate`
+- `sensor.openclaw_uptime_seconds`
 
 Add as Lovelace resource:
 - URL: `/local/openclaw-board-card.js`

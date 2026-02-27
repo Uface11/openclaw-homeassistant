@@ -212,7 +212,8 @@ class OpenClawBoardCard extends HTMLElement {
           </div>
           <div class="toolbar">
             ${this.config.board_url ? `<a class="btn" href="${this.config.board_url}" target="_blank" rel="noreferrer">Open Board ↗</a>` : ''}
-            <button class="btn" id="refreshStatus">Refresh</button>
+            <button class="btn" id="refreshStatus">Update</button>
+            <button class="btn" id="healthCheck">Health</button>
           </div>
         </div>
 
@@ -225,6 +226,16 @@ class OpenClawBoardCard extends HTMLElement {
     this.content.querySelector('#refreshStatus')?.addEventListener('click', async () => {
       await this._hass.callService('openclaw', 'refresh_status', {});
       this._last = 'Status aktualisiert';
+      this.render();
+    });
+
+    this.content.querySelector('#healthCheck')?.addEventListener('click', async () => {
+      try {
+        await this._hass.callService('openclaw', 'health_check', {});
+        this._last = 'Health check erfolgreich';
+      } catch (e) {
+        this._last = `Health check Fehler: ${e?.message || e}`;
+      }
       this.render();
     });
 
