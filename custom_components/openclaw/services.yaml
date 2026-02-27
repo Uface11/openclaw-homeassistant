@@ -1,0 +1,21 @@
+send_message:
+  name: Send message
+  description: Send a message to OpenClaw
+  fields:
+    message:
+      required: true
+      selector:
+        text:
+
+run_task:
+  name: Run task
+  description: Run a task in OpenClaw
+  fields:
+    task:
+      required: true
+      selector:
+        text:
+
+refresh_status:
+  name: Refresh status
+  description: Force refresh OpenClaw status

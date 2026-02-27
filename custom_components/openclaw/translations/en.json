@@ -1,0 +1,14 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect OpenClaw",
+        "description": "Enter your OpenClaw Gateway settings",
+        "data": {
+          "base_url": "Gateway URL",
+          "api_token": "API Token"
+        }
+      }
+    }
+  }
+}
