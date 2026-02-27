@@ -9,6 +9,32 @@
           "api_token": "API Token",
           "agent_id": "Agent ID"
         }
+      },
+      "reauth_confirm": {
+        "title": "Reconnect OpenClaw",
+        "description": "Your token is invalid or expired. Enter a new API token.",
+        "data": {
+          "api_token": "API Token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to OpenClaw Gateway",
+      "invalid_auth": "Invalid API token or insufficient permissions",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "reauth_successful": "Re-authentication successful"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "OpenClaw options",
+        "data": {
+          "scan_interval": "Update interval (seconds)",
+          "agent_id": "Agent ID"
+        }
       }
     }
   }

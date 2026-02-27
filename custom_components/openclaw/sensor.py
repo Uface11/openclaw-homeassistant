@@ -3,6 +3,7 @@ from __future__ import annotations
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -49,6 +50,19 @@ class OpenClawBaseSensor(CoordinatorEntity, SensorEntity):
     @property
     def root(self):
         return _data_root(self.coordinator.data)
+
+    @property
+    def available(self) -> bool:
+        return bool(self.coordinator.last_update_success)
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        return DeviceInfo(
+            identifiers={(DOMAIN, "gateway")},
+            name="OpenClaw Gateway",
+            manufacturer="OpenClaw",
+            model="Gateway",
+        )
 
 
 class OpenClawStatusSensor(OpenClawBaseSensor):
@@ -97,6 +111,8 @@ class OpenClawUptimeSensor(OpenClawBaseSensor):
     _attr_name = "Uptime seconds"
     _attr_unique_id = "openclaw_uptime_seconds"
     _attr_icon = "mdi:timer-outline"
+    _attr_native_unit_of_measurement = "s"
+    _attr_state_class = "measurement"
 
     @property
     def native_value(self):

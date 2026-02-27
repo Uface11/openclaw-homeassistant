@@ -5,10 +5,12 @@ OpenClaw integration for Home Assistant with a simple dashboard workflow:
 - send prompts/tasks to OpenClaw
 - view status in Home Assistant
 
-## MVP (v0.1)
-- Config Flow (UI setup: Gateway URL, API token, agent id)
-- Services: `openclaw.send_message`, `openclaw.run_task`, `openclaw.refresh_status`
-- Sensor: online/offline + status payload
+## Release (v0.1.1)
+- Validated Config Flow (checks connectivity/auth before saving)
+- Re-auth flow for expired/invalid token
+- Options Flow (change poll interval + agent id without re-adding)
+- Services: `openclaw.send_message`, `openclaw.run_task`, `openclaw.refresh_status`, `openclaw.health_check`
+- Sensor suite with device grouping + availability handling
 
 ## Gateway endpoints used
 - `POST /tools/invoke` for status (`session_status` tool)
@@ -48,11 +50,11 @@ Features (v2):
 - Top-right actions: **Update** + **Health**
 
 ## Exposed server entities (Top 5)
-- `sensor.openclaw_status`
-- `sensor.openclaw_active_sessions`
-- `sensor.openclaw_usage_tokens`
-- `sensor.openclaw_cost_estimate`
-- `sensor.openclaw_uptime_seconds`
+- `sensor.openclaw_gateway_status`
+- `sensor.openclaw_gateway_active_sessions`
+- `sensor.openclaw_gateway_usage_tokens`
+- `sensor.openclaw_gateway_cost_estimate`
+- `sensor.openclaw_gateway_uptime_seconds`
 
 Add as Lovelace resource:
 - URL: `/local/openclaw-board-card.js`

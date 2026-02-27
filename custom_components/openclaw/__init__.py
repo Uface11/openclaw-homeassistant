@@ -4,13 +4,16 @@ import aiohttp
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 
-from .api import OpenClawApi
+from .api import OpenClawApi, OpenClawAuthError, OpenClawConnectionError
 from .const import (
     CONF_AGENT_ID,
     CONF_API_TOKEN,
     CONF_BASE_URL,
+    CONF_SCAN_INTERVAL,
     DEFAULT_AGENT_ID,
+    DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     PLATFORMS,
     SERVICE_REFRESH_STATUS,
@@ -32,19 +35,35 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     session = aiohttp.ClientSession()
+    effective_agent_id = entry.options.get(CONF_AGENT_ID, entry.data.get(CONF_AGENT_ID, DEFAULT_AGENT_ID))
+    scan_interval = int(entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL))
+
     api = OpenClawApi(
         base_url=entry.data[CONF_BASE_URL],
         api_token=entry.data[CONF_API_TOKEN],
-        agent_id=entry.data.get(CONF_AGENT_ID, DEFAULT_AGENT_ID),
+        agent_id=effective_agent_id,
         session=session,
     )
-    coordinator = OpenClawCoordinator(hass, api)
-    await coordinator.async_config_entry_first_refresh()
+    coordinator = OpenClawCoordinator(hass, api, scan_interval=scan_interval)
+    try:
+        await coordinator.async_config_entry_first_refresh()
+    except OpenClawAuthError as err:
+        await session.close()
+        raise ConfigEntryAuthFailed("Invalid OpenClaw API token") from err
+    except OpenClawConnectionError as err:
+        await session.close()
+        raise ConfigEntryNotReady("Cannot connect to OpenClaw Gateway") from err
+    except Exception as err:
+        await session.close()
+        raise ConfigEntryNotReady(f"OpenClaw setup failed: {err}") from err
+
+    unsub_options_listener = entry.add_update_listener(_async_update_listener)
 
     hass.data[DOMAIN][entry.entry_id] = {
         "api": api,
         "coordinator": coordinator,
         "session": session,
+        "unsub_options_listener": unsub_options_listener,
     }
 
     async def _send_message(call: ServiceCall) -> None:
@@ -68,10 +87,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
+async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    await hass.config_entries.async_reload(entry.entry_id)
+
+
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         data = hass.data[DOMAIN].pop(entry.entry_id)
+        data["unsub_options_listener"]()
         await data["session"].close()
         if not hass.data[DOMAIN]:
             hass.services.async_remove(DOMAIN, SERVICE_SEND_MESSAGE)
