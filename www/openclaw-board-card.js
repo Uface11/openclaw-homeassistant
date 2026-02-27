@@ -106,6 +106,10 @@ class OpenClawBoardCard extends HTMLElement {
 
     const statusState = this._hass.states['sensor.openclaw_status'];
     const status = statusState?.state ?? 'unknown';
+    const activeSessions = this._hass.states['sensor.openclaw_active_sessions']?.state ?? '-';
+    const usageTokens = this._hass.states['sensor.openclaw_usage_tokens']?.state ?? '-';
+    const costEstimate = this._hass.states['sensor.openclaw_cost_estimate']?.state ?? '-';
+    const uptimeSeconds = this._hass.states['sensor.openclaw_uptime_seconds']?.state ?? '-';
 
     if (!this.content) {
       const card = document.createElement('ha-card');
@@ -197,7 +201,12 @@ class OpenClawBoardCard extends HTMLElement {
         .toolbar{display:flex;gap:8px;align-items:center}
         .btn{border:1px solid var(--divider-color);background:var(--card-background-color);padding:6px 10px;border-radius:8px;cursor:pointer}
 
-        @media (max-width:1200px){.kanban-board{grid-template-columns:repeat(2,minmax(200px,1fr));}}
+        .metrics{display:grid;grid-template-columns:repeat(5,minmax(110px,1fr));gap:8px;margin:10px 0 14px 0}
+        .metric{background:var(--secondary-background-color);border:1px solid var(--divider-color);border-radius:8px;padding:8px}
+        .metric-label{font-size:11px;opacity:.7}
+        .metric-value{font-size:14px;font-weight:700;margin-top:2px}
+
+        @media (max-width:1200px){.kanban-board{grid-template-columns:repeat(2,minmax(200px,1fr));}.metrics{grid-template-columns:repeat(3,minmax(100px,1fr));}}
         @media (max-width:760px){.kanban-board{grid-template-columns:1fr;}}
       </style>
 
@@ -215,6 +224,14 @@ class OpenClawBoardCard extends HTMLElement {
             <button class="btn" id="refreshStatus">Update</button>
             <button class="btn" id="healthCheck">Health</button>
           </div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Status</div><div class="metric-value">${status}</div></div>
+          <div class="metric"><div class="metric-label">Sessions</div><div class="metric-value">${activeSessions}</div></div>
+          <div class="metric"><div class="metric-label">Tokens</div><div class="metric-value">${usageTokens}</div></div>
+          <div class="metric"><div class="metric-label">Cost</div><div class="metric-value">${costEstimate}</div></div>
+          <div class="metric"><div class="metric-label">Uptime (s)</div><div class="metric-value">${uptimeSeconds}</div></div>
         </div>
 
         <div class="kanban-board">${boardHtml}</div>
